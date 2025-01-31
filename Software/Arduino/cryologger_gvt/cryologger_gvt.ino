@@ -1,7 +1,7 @@
 /*
     Title:    Cryologger - Glacier Velocity Tracker (GVT)
-    Version:  2.3.1
-    Date:     January 17, 2024
+    Version:  2.4.0
+    Date:     January 31, 2025
     Author:   Adam Garbo
     License:  GPLv3. See license file for more information.
   
@@ -20,9 +20,9 @@
 // Libraries                            Version   License URL/Comments
 // ----------------------------------------------------------------------------
 #include <RTC.h>                      // 1.2      MIT     Included in Apollo3 Core v1.2.3
-#include <SdFat.h>                    // 2.2.2    MIT     http://librarymanager/All#SdFat
-#include <SparkFun_Qwiic_OLED.h>      // 1.0.5    MIT     http://librarymanager/All#SparkFun_Qwiic_OLED_Arduino_Library
-#include <SparkFun_u-blox_GNSS_v3.h>  // 3.0.16   MIT     http://librarymanager/All#SparkFun_u-blox_GNSS_v3
+#include <SdFat.h>                    // 2.3.0    MIT     http://librarymanager/All#SdFat
+#include <SparkFun_Qwiic_OLED.h>      // 1.0.13   MIT     http://librarymanager/All#SparkFun_Qwiic_OLED_Arduino_Library
+#include <SparkFun_u-blox_GNSS_v3.h>  // 3.1.8    MIT     http://librarymanager/All#SparkFun_u-blox_GNSS_v3
 #include <SPI.h>                      //          MIT     Included in Apollo3 Core v1.2.3
 #include <WDT.h>                      // 0.1      MIT     Included in Apollo3 Core v1.2.3
 #include <Wire.h>                     //          MIT     Included in Apollo3 Core v1.2.3
@@ -96,6 +96,14 @@ byte          alarmSleepHours     = 1;        // Rolling hour alarm
 byte          alarmSleepMinutes   = 0;        // Rolling minute alarm
 
 // ----------------------------------------------------------------------------
+// Seasonal logging configuration
+// ----------------------------------------------------------------------------
+byte          alarmSummerStartDay   = 1;
+byte          alarmSummerStartMonth = 1;
+byte          alarmSummerEndDay     = 31;
+byte          alarmSummerEndMonth   = 2;
+
+// ----------------------------------------------------------------------------
 // Global variable declarations
 // ----------------------------------------------------------------------------
 volatile bool alarmFlag           = false;    // Flag for alarm interrupt service routine
@@ -110,6 +118,7 @@ byte          alarmModeLogging    = 4;        // Default logging alarm mode (dai
 byte          alarmModeSleep      = 4;        // Default sleep alarm mode (daily)
 byte          dateCurrent         = 0;        // Variable for tracking when the date changes
 byte          dateNew             = 0;        // Variable for tracking when the date changes
+byte          normalOperationMode;            // Stores the user's original logging mode
 char          logFileName[30]     = "";       // Log file name
 char          debugFileName[20]   = "";       // Debug log file name
 char          dateTimeBuffer[25]  = "";       // Buffer to store datetime information

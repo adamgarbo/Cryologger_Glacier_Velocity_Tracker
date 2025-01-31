@@ -18,6 +18,18 @@ void setInitialAlarm()
   // 6: Alarm match hundredths, seconds                             (every minute)
   // 7: Alarm match hundredths                                      (every second)
 
+  normalOperationMode = operationMode;
+
+  // Re-check each alarm cycle if it's summer
+  if (isSummer())
+  {
+    operationMode = 3; // Continuous logging mode
+  }
+  else
+  {
+    operationMode = normalOperationMode; // Default to normal user-selected mode
+  }
+
   // Check for operation mode
   if (operationMode == 1) // Daily mode
   {
@@ -68,7 +80,7 @@ void setInitialAlarm()
   // Clear the RTC alarm interrupt
   am_hal_rtc_int_clear(AM_HAL_RTC_INT_ALM);
 
-  //DEBUG_PRINT(F("Debug - Initial alarm mode: "));  DEBUG_PRINTLN(alarmModeInitial);
+  DEBUG_PRINT(F("Debug - Initial alarm mode: "));  DEBUG_PRINTLN(alarmModeInitial);
 }
 
 // Set logging alarm(s)
@@ -77,6 +89,16 @@ void setAwakeAlarm()
   // Clear the RTC alarm interrupt
   am_hal_rtc_int_clear(AM_HAL_RTC_INT_ALM);
 
+  // Re-check each alarm cycle if it's summer
+  if (isSummer())
+  {
+    operationMode = 3; // Continuous logging mode
+  }
+  else
+  {
+    operationMode = normalOperationMode; // Default to normal user-selected mode
+  }
+  
   // Check for logging mode
   if (operationMode == 1) // Daily mode
   {
@@ -226,6 +248,7 @@ void printAlarm()
   DEBUG_PRINTLN(alarmBuffer);
 }
 
+// Check RTC datetime
 void checkDate()
 {
   rtc.getTime(); // Get the RTC's date and time
@@ -238,3 +261,23 @@ void checkDate()
   Serial.print("Current date: "); Serial.print(dateCurrent);
   Serial.print(" New date: "); Serial.println(dateNew);
 }
+
+// Check for summer logging season
+bool isSummer()
+{
+  rtc.getTime(); // Ensure RTC has the latest date and time
+
+  // If the start and end are in the same month, check if the day falls within the range
+  if (alarmSummerStartMonth == alarmSummerEndMonth)
+  {
+    return (rtc.month == alarmSummerStartMonth && 
+            rtc.dayOfMonth >= alarmSummerStartDay && 
+            rtc.dayOfMonth <= alarmSummerEndDay);
+  }
+
+  // General case: check month and day conditions
+  return (rtc.month > alarmSummerStartMonth && rtc.month < alarmSummerEndMonth) ||
+         (rtc.month == alarmSummerStartMonth && rtc.dayOfMonth >= alarmSummerStartDay) ||
+         (rtc.month == alarmSummerEndMonth && rtc.dayOfMonth <= alarmSummerEndDay);
+}
+
