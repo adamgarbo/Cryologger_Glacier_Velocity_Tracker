@@ -20,14 +20,15 @@ void setInitialAlarm()
 
   normalOperationMode = operationMode;
 
-  // Re-check each alarm cycle if it's summer
+  // Check if it's summer season
   if (isSummer())
   {
     operationMode = 3; // Continuous logging mode
+    DEBUG_PRINTLN(F("Debug - Summer logging mode enabled"));
   }
   else
   {
-    operationMode = normalOperationMode; // Default to normal user-selected mode
+    DEBUG_PRINT(F("Debug - Normal operation mode: "));  DEBUG_PRINTLN(normalOperationMode);
   }
 
   // Check for operation mode
@@ -70,7 +71,7 @@ void setInitialAlarm()
     // Set the alarm mode
     rtc.setAlarmMode(alarmModeInitial);
 
-    // Set flag
+    // Set flag so logging begins immediately
     alarmFlag = true;
   }
 
@@ -93,12 +94,14 @@ void setAwakeAlarm()
   if (isSummer())
   {
     operationMode = 3; // Continuous logging mode
+    DEBUG_PRINTLN(F("Debug - Summer logging mode enabled"));
   }
   else
   {
     operationMode = normalOperationMode; // Default to normal user-selected mode
+    DEBUG_PRINT(F("Debug - Normal operation mode: "));  DEBUG_PRINTLN(normalOperationMode);
   }
-  
+
   // Check for logging mode
   if (operationMode == 1) // Daily mode
   {
@@ -254,30 +257,29 @@ void checkDate()
   rtc.getTime(); // Get the RTC's date and time
   if (firstTimeFlag)
   {
-    
+
     dateCurrent = rtc.dayOfMonth;
   }
   dateNew = rtc.dayOfMonth;
-  Serial.print("Current date: "); Serial.print(dateCurrent);
-  Serial.print(" New date: "); Serial.println(dateNew);
+  DEBUG_PRINT("Current date: "); DEBUG_PRINT(dateCurrent);
+  DEBUG_PRINT(" New date: ");  DEBUG_PRINTLN(dateNew);
 }
 
 // Check for summer logging season
 bool isSummer()
 {
-  rtc.getTime(); // Ensure RTC has the latest date and time
+  // Get the RTC's date and time
+  rtc.getTime();
 
-  // If the start and end are in the same month, check if the day falls within the range
-  if (alarmSummerStartMonth == alarmSummerEndMonth)
-  {
-    return (rtc.month == alarmSummerStartMonth && 
-            rtc.dayOfMonth >= alarmSummerStartDay && 
-            rtc.dayOfMonth <= alarmSummerEndDay);
-  }
+  // Convert the current month/day to a single integer, e.g. 7*100 + 15 = 715 (July 15)
+  int currentMD = (rtc.month * 100) + rtc.dayOfMonth;
 
-  // General case: check month and day conditions
-  return (rtc.month > alarmSummerStartMonth && rtc.month < alarmSummerEndMonth) ||
-         (rtc.month == alarmSummerStartMonth && rtc.dayOfMonth >= alarmSummerStartDay) ||
-         (rtc.month == alarmSummerEndMonth && rtc.dayOfMonth <= alarmSummerEndDay);
+  // Convert the start and end month/day to the same format
+  int startMD = (alarmSummerStartMonth * 100) + alarmSummerStartDay;
+  int endMD   = (alarmSummerEndMonth   * 100) + alarmSummerEndDay;
+  DEBUG_PRINT("startMD: "); DEBUG_PRINT(startMD);
+  DEBUG_PRINT(" endMD: ");  DEBUG_PRINTLN(endMD);
+  
+  // Check if the currentMD is within [startMD, endMD]
+  return (currentMD >= startMD && currentMD <= endMD);
 }
-

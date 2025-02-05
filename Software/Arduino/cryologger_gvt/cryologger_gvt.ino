@@ -1,7 +1,7 @@
 /*
     Title:    Cryologger - Glacier Velocity Tracker (GVT)
     Version:  2.4.0
-    Date:     January 31, 2025
+    Date:     February 5, 2025
     Author:   Adam Garbo
     License:  GPLv3. See license file for more information.
   
@@ -84,9 +84,9 @@ SFE_UBLOX_GNSS    gnss;       // I2C address: 0x42
 byte          operationMode       = 1;        // 1: daily, 2: rolling, 3: 24-hour/day
 
 // 1: Daily alarm configuration
-byte          alarmStartHour      = 16;       // Daily logging start hour (UTC)
+byte          alarmStartHour      = 13;       // Daily logging start hour (UTC)
 byte          alarmStartMinute    = 0;        // Daily logging start minute (UTC)
-byte          alarmStopHour       = 19;       // Daily logging end hour (UTC)
+byte          alarmStopHour       = 14;       // Daily logging end hour (UTC)
 byte          alarmStopMinute     = 0;        // Daily logging end minute (UTC)
 
 // 2: Rolling alarm configuration
@@ -98,10 +98,10 @@ byte          alarmSleepMinutes   = 0;        // Rolling minute alarm
 // ----------------------------------------------------------------------------
 // Seasonal logging configuration
 // ----------------------------------------------------------------------------
-byte          alarmSummerStartDay   = 1;
-byte          alarmSummerStartMonth = 1;
-byte          alarmSummerEndDay     = 31;
-byte          alarmSummerEndMonth   = 2;
+byte          alarmSummerStartDay   = 5;
+byte          alarmSummerStartMonth = 2;
+byte          alarmSummerEndDay     = 2;
+byte          alarmSummerEndMonth   = 6;
 
 // ----------------------------------------------------------------------------
 // Global variable declarations
@@ -118,7 +118,7 @@ byte          alarmModeLogging    = 4;        // Default logging alarm mode (dai
 byte          alarmModeSleep      = 4;        // Default sleep alarm mode (daily)
 byte          dateCurrent         = 0;        // Variable for tracking when the date changes
 byte          dateNew             = 0;        // Variable for tracking when the date changes
-byte          normalOperationMode;            // Stores the user's original logging mode
+byte          normalOperationMode = 0;        // Stores the user's original logging mode
 char          logFileName[30]     = "";       // Log file name
 char          debugFileName[20]   = "";       // Debug log file name
 char          dateTimeBuffer[25]  = "";       // Buffer to store datetime information
