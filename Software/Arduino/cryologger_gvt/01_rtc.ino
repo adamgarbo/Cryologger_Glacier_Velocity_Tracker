@@ -2,7 +2,7 @@
 void configureRtc()
 {
   // Debugging only: Manually set the RTC date and time
-  //rtc.setTime(23, 57, 30, 0, 25, 6, 23); // hour, minutes, seconds, hundredths, day, month, year
+  rtc.setTime(23, 57, 30, 0, 7, 2, 25); // hour, minutes, seconds, hundredths, day, month, year
 }
 
 // Set initial RTC alarm(s)
@@ -18,18 +18,11 @@ void setInitialAlarm()
   // 6: Alarm match hundredths, seconds                             (every minute)
   // 7: Alarm match hundredths                                      (every second)
 
+  // Record specified operation mode
   normalOperationMode = operationMode;
 
-  // Check if it's summer season
-  if (isSummer())
-  {
-    operationMode = 3; // Continuous logging mode
-    DEBUG_PRINTLN(F("Debug - Summer logging mode enabled"));
-  }
-  else
-  {
-    DEBUG_PRINT(F("Debug - Normal operation mode: "));  DEBUG_PRINTLN(normalOperationMode);
-  }
+  // Check for summer logging mode
+  checkOperationMode();
 
   // Check for operation mode
   if (operationMode == 1) // Daily mode
@@ -90,17 +83,8 @@ void setAwakeAlarm()
   // Clear the RTC alarm interrupt
   am_hal_rtc_int_clear(AM_HAL_RTC_INT_ALM);
 
-  // Re-check each alarm cycle if it's summer
-  if (isSummer())
-  {
-    operationMode = 3; // Continuous logging mode
-    DEBUG_PRINTLN(F("Debug - Summer logging mode enabled"));
-  }
-  else
-  {
-    operationMode = normalOperationMode; // Default to normal user-selected mode
-    DEBUG_PRINT(F("Debug - Normal operation mode: "));  DEBUG_PRINTLN(normalOperationMode);
-  }
+  // Re-check for summer logging mode each alarm cycle
+  checkOperationMode();
 
   // Check for logging mode
   if (operationMode == 1) // Daily mode
@@ -155,6 +139,9 @@ void setSleepAlarm()
   // Clear RTC alarm interrupt
   am_hal_rtc_int_clear(AM_HAL_RTC_INT_ALM);
 
+  // Re-check for summer logging mode each alarm cycle
+  checkOperationMode();
+  
   // Check for logging mode
   if (operationMode == 1) // Daily mode
   {
@@ -234,7 +221,7 @@ void getDateTime()
 void printDateTime()
 {
   rtc.getTime(); // Get the RTC's date and time
-  sprintf(dateTimeBuffer, "20%02d-%02d-%02d %02d:%02d:%02d",
+  sprintf(dateTimeBuffer, "20%02d-%02d-%02d %02d:%02d:%02d.%02d",
           rtc.year, rtc.month, rtc.dayOfMonth,
           rtc.hour, rtc.minute, rtc.seconds, rtc.hundredths);
   DEBUG_PRINTLN(dateTimeBuffer);
@@ -244,8 +231,8 @@ void printDateTime()
 void printAlarm()
 {
   rtc.getAlarm(); // Get the RTC's alarm date and time
-  char alarmBuffer[25];
-  sprintf(alarmBuffer, "20%02d-%02d-%02d %02d:%02d:%02d",
+  char alarmBuffer[30];
+  sprintf(alarmBuffer, "20%02d-%02d-%02d %02d:%02d:%02d.%02d",
           rtc.year, rtc.alarmMonth, rtc.alarmDayOfMonth,
           rtc.alarmHour, rtc.alarmMinute, rtc.alarmSeconds, rtc.alarmHundredths);
   DEBUG_PRINTLN(alarmBuffer);
@@ -279,7 +266,20 @@ bool isSummer()
   int endMD   = (alarmSummerEndMonth   * 100) + alarmSummerEndDay;
   DEBUG_PRINT("startMD: "); DEBUG_PRINT(startMD);
   DEBUG_PRINT(" endMD: ");  DEBUG_PRINTLN(endMD);
-  
+
   // Check if the currentMD is within [startMD, endMD]
   return (currentMD >= startMD && currentMD <= endMD);
+}
+
+void checkOperationMode()
+{
+  if (summerMode && isSummer())
+  {
+    operationMode = 3; // Continuous logging mode
+    DEBUG_PRINT(F("Debug - Summer logging mode enabled: ")); ; DEBUG_PRINTLN(normalOperationMode);
+  } else
+  {
+    operationMode = normalOperationMode;
+    DEBUG_PRINT(F("Debug - Normal operation mode: ")); DEBUG_PRINTLN(normalOperationMode);
+  }
 }

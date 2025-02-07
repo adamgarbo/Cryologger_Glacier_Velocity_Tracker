@@ -83,6 +83,9 @@ SFE_UBLOX_GNSS    gnss;       // I2C address: 0x42
 // 3: Continuous (e.g., constant logging with new log file created every day at 00:00 UTC)
 byte          operationMode       = 1;        // 1: daily, 2: rolling, 3: 24-hour/day
 
+// Summer logging mode
+bool          summerMode          = true;     // Continuous logging during specified period
+
 // 1: Daily alarm configuration
 byte          alarmStartHour      = 13;       // Daily logging start hour (UTC)
 byte          alarmStartMinute    = 0;        // Daily logging start minute (UTC)
@@ -98,10 +101,10 @@ byte          alarmSleepMinutes   = 0;        // Rolling minute alarm
 // ----------------------------------------------------------------------------
 // Seasonal logging configuration
 // ----------------------------------------------------------------------------
-byte          alarmSummerStartDay   = 5;
+byte          alarmSummerStartDay   = 1;
 byte          alarmSummerStartMonth = 2;
-byte          alarmSummerEndDay     = 2;
-byte          alarmSummerEndMonth   = 6;
+byte          alarmSummerEndDay     = 7;
+byte          alarmSummerEndMonth   = 2;
 
 // ----------------------------------------------------------------------------
 // Global variable declarations
@@ -121,7 +124,7 @@ byte          dateNew             = 0;        // Variable for tracking when the 
 byte          normalOperationMode = 0;        // Stores the user's original logging mode
 char          logFileName[30]     = "";       // Log file name
 char          debugFileName[20]   = "";       // Debug log file name
-char          dateTimeBuffer[25]  = "";       // Buffer to store datetime information
+char          dateTimeBuffer[30]  = "";       // Buffer to store datetime information
 const int     sdWriteSize         = 512;      // Write data to SD in blocks of 512 bytes
 const int     fileBufferSize      = 16384;    // Buffer size to allocate 16 KB RAM for UBX message storage
 unsigned int  debugCounter        = 0;        // Counter to track number of recorded debug messages
