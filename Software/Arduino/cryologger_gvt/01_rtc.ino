@@ -241,15 +241,15 @@ void printAlarm()
 // Check RTC datetime
 void checkDate()
 {
+  DEBUG_PRINTLN(F("Info - Checking date..."));
   rtc.getTime(); // Get the RTC's date and time
   if (firstTimeFlag)
   {
-
     dateCurrent = rtc.dayOfMonth;
   }
   dateNew = rtc.dayOfMonth;
-  DEBUG_PRINT("Current date: "); DEBUG_PRINT(dateCurrent);
-  DEBUG_PRINT(" New date: ");  DEBUG_PRINTLN(dateNew);
+  DEBUG_PRINT(F("Info - Current date: ")); DEBUG_PRINT(dateCurrent);
+  DEBUG_PRINT(F(" New date: "));  DEBUG_PRINTLN(dateNew);
 }
 
 // Check for summer logging season
@@ -264,8 +264,8 @@ bool isSummer()
   // Convert the start and end month/day to the same format
   int startMD = (alarmSummerStartMonth * 100) + alarmSummerStartDay;
   int endMD   = (alarmSummerEndMonth   * 100) + alarmSummerEndDay;
-  DEBUG_PRINT("startMD: "); DEBUG_PRINT(startMD);
-  DEBUG_PRINT(" endMD: ");  DEBUG_PRINTLN(endMD);
+  DEBUG_PRINT("Info - Summer logging mode start: "); DEBUG_PRINT(startMD);
+  DEBUG_PRINT(" end: ");  DEBUG_PRINTLN(endMD);
 
   // Check if the currentMD is within [startMD, endMD]
   return (currentMD >= startMD && currentMD <= endMD);
@@ -273,13 +273,14 @@ bool isSummer()
 
 void checkOperationMode()
 {
+  DEBUG_PRINTLN(F("Info - Checking operation mode..."));
   if (summerMode && isSummer())
   {
     operationMode = 3; // Continuous logging mode
-    DEBUG_PRINT(F("Debug - Summer logging mode enabled: ")); ; DEBUG_PRINTLN(normalOperationMode);
+    DEBUG_PRINT(F("Info - Summer logging mode enabled: ")); ; DEBUG_PRINTLN(operationMode);
   } else
   {
     operationMode = normalOperationMode;
-    DEBUG_PRINT(F("Debug - Normal operation mode: ")); DEBUG_PRINTLN(normalOperationMode);
+    DEBUG_PRINT(F("Info - Normal operation mode enabled: ")); DEBUG_PRINTLN(operationMode);
   }
 }

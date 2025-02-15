@@ -1,8 +1,8 @@
 // Create timestamped log file name
 void getLogFileName()
 {
-  sprintf(logFileName, "%s_%d_20%02d%02d%02d_%02d%02d%02d.ubx",
-          ID, UNIT, rtc.year, rtc.month, rtc.dayOfMonth,
+  sprintf(logFileName, "%s-20%02d%02d%02d_%02d%02d%02d.ubx",
+          SERIAL, rtc.year, rtc.month, rtc.dayOfMonth,
           rtc.hour, rtc.minute, rtc.seconds);
 
   DEBUG_PRINT("Info - logFileName: "); DEBUG_PRINTLN(logFileName);
@@ -12,7 +12,7 @@ void getLogFileName()
 void createDebugFile()
 {
   // Debug log file name
-  sprintf(debugFileName, "%s_%d_debug.csv", ID, UNIT);
+  sprintf(debugFileName, "%s-debug.csv", SERIAL);
 
   // Create debug log file
   // O_CREAT - Create the file if it does not exist
@@ -25,7 +25,7 @@ void createDebugFile()
   }
   else
   {
-    DEBUG_PRINT("Info - Created "); DEBUG_PRINTLN(debugFileName);
+    DEBUG_PRINT("Info - Created debug file: "); DEBUG_PRINTLN(debugFileName);
   }
 
   // Write header to file
@@ -80,7 +80,7 @@ void logDebug()
 
   // Log debugging information
   debugFile.print(dateTime);            debugFile.print(",");
-  debugFile.print(readVoltage());       debugFile.print(",");
+  debugFile.print(readBattery());       debugFile.print(",");
   debugFile.print(online.microSd);      debugFile.print(",");
   debugFile.print(online.gnss);         debugFile.print(",");
   debugFile.print(online.logGnss);      debugFile.print(",");
@@ -120,7 +120,7 @@ void logDebug()
 
   // Print debugging information
   DEBUG_PRINT(dateTime);          DEBUG_PRINT(",");
-  DEBUG_PRINT(readVoltage());     DEBUG_PRINT(",");
+  DEBUG_PRINT(readBattery());     DEBUG_PRINT(",");
   DEBUG_PRINT(online.microSd);    DEBUG_PRINT(",");
   DEBUG_PRINT(online.gnss);       DEBUG_PRINT(",");
   DEBUG_PRINT(online.logGnss);    DEBUG_PRINT(",");

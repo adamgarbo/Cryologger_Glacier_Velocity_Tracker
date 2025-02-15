@@ -1,4 +1,4 @@
-float readVoltage()
+float readBattery()
 {
   // Start loop timer
   unsigned long loopStartTime = micros();

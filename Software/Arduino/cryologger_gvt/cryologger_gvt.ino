@@ -28,10 +28,15 @@
 #include <Wire.h>                     //          MIT     Included in Apollo3 Core v1.2.3
 
 // ----------------------------------------------------------------------------
+// Define hardware and software versions
+// ----------------------------------------------------------------------------
+#define SOFTWARE_VERSION      "2.4.0"
+#define HARDWARE_VERSION      "2.21"
+
+// ----------------------------------------------------------------------------
 // Define unique identifier
 // ----------------------------------------------------------------------------
-char        ID[5] = "GVT";
-const int   UNIT  = 1;
+#define SERIAL "GVT-25-018"
 
 // -----------------------------------------------------------------------------
 // Debugging macros
@@ -80,16 +85,16 @@ SFE_UBLOX_GNSS    gnss;       // I2C address: 0x42
 // Logging operation modes
 // 1: Daily (e.g., 3 hours each day between 16:00-19:00)
 // 2: Rolling (e.g., 2 hours awake, 3 hours asleep, repeat)
-// 3: Continuous (e.g., constant logging with new log file created every day at 00:00 UTC)
+// 3: Continuous (e.g., constant logging with new log file each day at 00:00 UTC)
 byte          operationMode       = 1;        // 1: daily, 2: rolling, 3: 24-hour/day
 
 // Summer logging mode
 bool          summerMode          = true;     // Continuous logging during specified period
 
 // 1: Daily alarm configuration
-byte          alarmStartHour      = 13;       // Daily logging start hour (UTC)
+byte          alarmStartHour      = 14;       // Daily logging start hour (UTC)
 byte          alarmStartMinute    = 0;        // Daily logging start minute (UTC)
-byte          alarmStopHour       = 14;       // Daily logging end hour (UTC)
+byte          alarmStopHour       = 17;       // Daily logging end hour (UTC)
 byte          alarmStopMinute     = 0;        // Daily logging end minute (UTC)
 
 // 2: Rolling alarm configuration
@@ -99,12 +104,12 @@ byte          alarmSleepHours     = 1;        // Rolling hour alarm
 byte          alarmSleepMinutes   = 0;        // Rolling minute alarm
 
 // ----------------------------------------------------------------------------
-// Seasonal logging configuration
+// Summer logging configuration
 // ----------------------------------------------------------------------------
 byte          alarmSummerStartDay   = 1;
-byte          alarmSummerStartMonth = 2;
-byte          alarmSummerEndDay     = 7;
-byte          alarmSummerEndMonth   = 2;
+byte          alarmSummerStartMonth = 6;
+byte          alarmSummerEndDay     = 31;
+byte          alarmSummerEndMonth   = 8;
 
 // ----------------------------------------------------------------------------
 // Global variable declarations
@@ -128,7 +133,7 @@ char          dateTimeBuffer[30]  = "";       // Buffer to store datetime inform
 const int     sdWriteSize         = 512;      // Write data to SD in blocks of 512 bytes
 const int     fileBufferSize      = 16384;    // Buffer size to allocate 16 KB RAM for UBX message storage
 unsigned int  debugCounter        = 0;        // Counter to track number of recorded debug messages
-unsigned int  gnssTimeout         = 300;      // Timeout for GNSS signal acquisition (seconds)
+unsigned int  gnssTimeout         = 5;      // Timeout for GNSS signal acquisition (seconds)
 unsigned int  maxBufferBytes      = 0;        // Maximum file buffer size
 unsigned int  reading             = 0;        // Battery voltage analog reading
 unsigned int  fixCounter          = 0;        // GNSS fix counter
@@ -201,11 +206,15 @@ void setup()
   // Configure OLED display
   configureOled();
 
+  DEBUG_PRINTLN();
   printLine();
-  DEBUG_PRINT("Cryologger Glacier Velocity Tracker #"); DEBUG_PRINT(ID); DEBUG_PRINT("_"); DEBUG_PRINTLN(UNIT);
+  DEBUG_PRINTLN("Cryologger - Glacier Velocity Tracker");
   printLine();
-  printDateTime(); // Print RTC's current date and time
-  DEBUG_PRINT("Voltage: "); DEBUG_PRINTLN(readVoltage()); // Print battery voltage
+  DEBUG_PRINT("Serial:");             printTab(3);  DEBUG_PRINTLN(SERIAL);
+  DEBUG_PRINT("Software Version:");   printTab(1);  DEBUG_PRINTLN(SOFTWARE_VERSION);
+  DEBUG_PRINT("Hardware Version:");   printTab(1);  DEBUG_PRINTLN(HARDWARE_VERSION);
+  DEBUG_PRINT("Datetime:");           printTab(2);  printDateTime();
+  DEBUG_PRINT("Battery Voltage:");    printTab(1);  DEBUG_PRINTLN(readBattery());
 
   // Display OLED messages(s)
   displayWelcome();

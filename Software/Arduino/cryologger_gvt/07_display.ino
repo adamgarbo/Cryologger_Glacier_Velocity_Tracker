@@ -52,16 +52,14 @@ void displayWelcome()
     enablePullups(); // Enable internal I2C pull-ups
     oled.erase();
     oled.setCursor(0, 0);
-    oled.print("Cryologger GVT #");
-    oled.print(ID);
-    oled.print("_");
-    oled.print(UNIT);
+    oled.print("Cryologger GVT ");
+    //oled.print(SERIAL);
     oled.setCursor(0, 10);
     oled.print(dateTimeBuffer);
     oled.setCursor(0, 20);
     oled.print("Voltage:");
     oled.setCursor(54, 20);
-    oled.print(readVoltage(), 2);
+    oled.print(readBattery(), 2);
     oled.display();
     disablePullups();
     myDelay(4000);
@@ -296,7 +294,7 @@ void displayScreen2()
     oled.setCursor(0, 10);
     oled.print("Voltage:");
     oled.setCursor(54, 10);
-    oled.print(readVoltage(), 2);
+    oled.print(readBattery(), 2);
     //oled.setCursor(90, 10);
     //oled.print(reading);
     oled.setCursor(0, 20);
